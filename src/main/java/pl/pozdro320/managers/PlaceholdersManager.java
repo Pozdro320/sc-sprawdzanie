@@ -1,0 +1,14 @@
+package pl.pozdro320.managers;
+
+import pl.pozdro320.helpers.MessageHelper;
+
+public class PlaceholdersManager {
+
+    public static String replacePlaceholders(String text, String targetName, String moderatorName) {
+        if (text == null) return "";
+        if (targetName != null) text = text.replace("{PLAYER}", targetName);
+        if (moderatorName != null) text = text.replace("{MODERATOR}", moderatorName);
+        return MessageHelper.colored(text);
+    }
+
+}

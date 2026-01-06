@@ -1,0 +1,5 @@
+name: sc-sprawdzanie
+version: 1.0
+main: pl.pozdro320.SCSprawdzMain
+api-version: 1.21
+author: Pozdro320

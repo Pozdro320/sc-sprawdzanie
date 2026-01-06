@@ -1,0 +1,126 @@
+# =============================================================
+# SCSprawdz - Dokumentacja Systemu Wiadomości
+# =============================================================
+# W każdej paczce (np. brak-sprawdzarki) możesz użyć poniższych opcji.
+# JEŚLI NIE CHCESZ danej funkcji (np. dźwięku lub tytułu),
+# po prostu usuń tę linię lub zostaw puste cudzysłowy "".
+#
+# "MOD" - osoba, która sprawdza gracza,
+# "GRACZ" - osoba, która jest sprawdzana.
+#
+# chat: "wiadomość" lub lista: ["linia1", "linia2"]
+# title: "Tytuł na środku ekranu"
+# subtitle: "Podtytuł na środku ekranu"
+# actionbar: "Napis nad ekwipunkiem"
+# sound: "NAZWA_DZWIEKU" (np. ENTITY_PLAYER_LEVELUP zgodnie z Minecraft Sound List)
+# broadcast: ["Wiadomość do wszystkich na serwerze"]
+#
+# Placeholdery:
+# {PLAYER} - Nazwa sprawdzanego gracza
+# {MODERATOR} - Nazwa moderatora
+# {MESSAGE} - Na treść napisaną przez gracza tylko dla komunikatów czatu.
+# =============================================================
+
+messages:
+  errors:
+      brak-sprawdzarki:
+        chat: "&5&lServer&f&lCreators &8» &fBrak lokalizacji &5sprawdzarki&f."
+        sound: "BLOCK_NOTE_BLOCK_BASS"
+      brak-spawnu:
+        chat: "&5&lServer&f&lCreators &8» &fBrak lokalizacji &5spawnu&f."
+        sound: "BLOCK_NOTE_BLOCK_BASS"
+      czy-sprawdzany:
+        chat: "&5&lServer&f&lCreators &8» &fTen gracz nie jest sprawdzany!"
+        sound: "BLOCK_NOTE_BLOCK_BASS"
+      gracz-offline:
+        chat: "&5&lServer&f&lCreators &8» &fWybrany gracz jest &coffline&f!"
+        sound: "BLOCK_NOTE_BLOCK_BASS"
+      blokada-komend:
+        chat: "&5&lServer&f&lCreators &8» &cKomendy sa zablokowane podczas kontroli!"
+        sound: "BLOCK_NOTE_BLOCK_BASS"
+      samego-siebie:
+        chat: "&5&lServer&f&lCreators &8» &cNie mozesz sprawdzic samego siebie!"
+        sound: "BLOCK_NOTE_BLOCK_BASS"
+      hierarchia:
+        chat: "&5&lServer&f&lCreators &8» &cNie masz uprawnien do sprawdzania &f{PLAYER}&c!"
+        sound: "BLOCK_NOTE_BLOCK_BASS"
+      nie-sprawdzany:
+        chat: "&5&lServer&f&lCreators &8» &cNie jestes aktualnie sprawdzany."
+        sound: "BLOCK_NOTE_BLOCK_BASS"
+
+  chat-sprawdzanie:
+    chat: "&8[&d&lGRACZ&8] &f{PLAYER}&8: &f{MESSAGE}"
+  chat-moderator:
+    chat: "&8[&b&lMOD&8] &b{MODERATOR}&8: &f{MESSAGE}"
+  chat-brak-moderatora:
+    chat: "&5&lServer&f&lCreators &8» &fPoczekaj na odpowiedz sprawdzajacego!"
+    sound: "BLOCK_NOTE_BLOCK_BASS"
+
+  sprawdz-start-gracz:
+    chat: "&5&lServer&f&lCreators &8» &fZostales wezwany do sprawdzania przez &b{MODERATOR}&f!"
+    sound: "ENTITY_ENDERMAN_TELEPORT"
+  sprawdz-start-mod:
+    title: "&d&lKONTROLA PLIKOW"
+    subtitle: "&fRozpoczeto procedure wobec &b{PLAYER}"
+    sound: "BLOCK_NOTE_BLOCK_BELL"
+    broadcast:
+      - " "
+      - "&5&lServer&f&lCreators &8» &fModerator &b{MODERATOR} &frozpoczal sprawdzanie gracza &d{PLAYER}&f!"
+      - " "
+
+  gracz-czysty:
+    title: "&a&lSTATUS: CZYSTY ✔"
+    subtitle: "&fMozesz kontynuować swoją rozgrywkę &4❤"
+    sound: "ENTITY_PLAYER_LEVELUP"
+  czysty-mod:
+    title: "&d&lKONTROLA"
+    subtitle: "&fGracz &b{PLAYER} &fzostal uznany za czystego."
+    sound: "ENTITY_PLAYER_LEVELUP"
+    broadcast:
+      - " "
+      - "&5&lServer&f&lCreators &8» &fGracz &d{PLAYER} &fzostal sprawdzony i jest &a&lCZYSTY&f!"
+      - " "
+
+  cheaty-mod:
+    title: "&5&lWYKRYTO CHEATY"
+    subtitle: "&fGracz &b{PLAYER} &fzostaje ukarany."
+    sound: "ENTITY_WITHER_DEATH"
+
+  przyznanie-mod:
+    title: "&b&lPRZYZNANIE SIE"
+    subtitle: "&fGracz &b{PLAYER} &fprzyznal sie do winy."
+    sound: "BLOCK_NOTE_BLOCK_PLING"
+
+  brak-wspolpracy-mod:
+    title: "&4&lBRAK WSPOLPRACY"
+    subtitle: "&fGracz &b{PLAYER} &fodmowil weryfikacji."
+    sound: "ENTITY_WITHER_SPAWN"
+
+  wylogowal-mod:
+    title: "&5&lWYLOGOWANO"
+    subtitle: "&fGracz &b{PLAYER} &fzostaje ukarany."
+    sound: "ENTITY_WITHER_DEATH"
+
+  tp-sprawdzarka:
+    chat: "&d&lSERVER-CREATORS &8» &8» &fTeleportowano do strefy sprawdzan."
+    sound: "ENTITY_ENDERMAN_TELEPORT"
+  
+  ustawienia-lokalizacji:
+    ustaw-sprawdzanie:
+      title: "&a&lPOMYŚLNIE"
+      subtitle: "&fLokalizacja sprawdzarki zostala ustawiona!"
+      sound: "ENTITY_ENDERMAN_TELEPORT"
+    ustaw-spawn:
+      title: "&a&lPOMYŚLNIE"
+      subtitle: "&fLokalizacja spawnu zostala ustawiona!"
+      sound: "ENTITY_ENDERMAN_TELEPORT"
+
+# WIADOMOŚCI TASKA PODCZAS SPRAWDZANIA
+  wiadomosc-gracz:
+    title: "&6&l⚠ &c&lJESTEŚ SPRAWDZANY &6&l⚠"
+    subtitle: "&7&l➡ &fWejdź na: &bdiscord.gg/servercreators &7&l⬅"
+    sound: "BLOCK_NOTE_BLOCK_HAT"
+
+  wiadomosc-mod:
+    actionbar: "&6&l⚡ &5&lServer&f&lCreators &8| &fSprawdzasz: &b{PLAYER}"
+    sound: "BLOCK_NOTE_BLOCK_HAT"
