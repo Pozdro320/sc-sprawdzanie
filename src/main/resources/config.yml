@@ -18,41 +18,50 @@
 # | Sekcja komend wykonywanych podczac danej akcji:                             |
 # | Dostepne zmienne: {PLAYER} - nick gracza, {MODERATOR} - nick sprawdzającego |
 commands:
-  wykryto-cheaty:
+  cheats-detected:
   - tempban {PLAYER} 7d &d&lSERVER-CREATORS &8» &fWykryto &5cheaty &fpodczas kontroli!
     &8(&b{MODERATOR}&8)
   
-  przyznanie-sie:
+  admission:
   - tempban {PLAYER} 5d &d&lSERVER-CREATORS &8» &fGracz &b{PLAYER} &fprzyznal sie
     do cheatow.
   
-  brak-wspolpracy:
+  lack-of-cooperation:
   - tempban {PLAYER} 14d &d&lSERVER-CREATORS &8» &fBrak wspolpracy z administratorem
     &b{MODERATOR}&f.
   
-  wylogowal-sie:
+  logged-out:
   - tempban {PLAYER} 14d &d&lSERVER-CREATORS &8» &fGracz &b{PLAYER} &fwylogowal sie
     podczas sprawdzania!
 
 
+# | Sekcja zapisu logów w histori                                              |
+history-reasons:
+  clean: "UZNANO ZA CZYSTEGO"
+  cheats: "ZBANOWANY (CHEATY)"
+  admission: "ZBANOWANY (PRZYZNANIE SIE)"
+  no-cooperation: "ZBANOWANY (BRAK WSPÓŁPRACY)"
+  logout: "ZBANOWANY (WYLOGOWAŁ SIĘ)"
 
-# | Sekcja lokalizacji:                                                                |
-# | Ustawiane automatycznie przez komendy /sprawdzarka <ustaw-spawn|ustaw-sprawdzanie> |
+
+# | Sekcja lokalizacji:                                                        |
+# | Ustawiane automatycznie przez komendy /sprawdzarka <set-checker|set-spawn> |
 locations:
-  sprawdzarka: {}
+  checker: {}
   spawn: {}
 
 
 # | Wyższa liczba = większa siła. Moderator musi mieć WIĘCEJ punktów niż sprawdzany.  |
 # | Przykład: 'moderator'(50) sprawdzi 'helpera'(30), ale nie sprawdzi 'admina'(100). |
 hierarchy:
-  owner: 1000
-  admin: 500
-  moderator: 100
-  helper: 50
-  vip: 10
-  gracz: 0
-  default: 0
+  enabled: false
+  rang:
+    gracz: 0
+    vip: 1
+    helper: 10
+    mod: 20
+    admin: 100
+    wlasciciel: 1000
 
 
 # | Lista komend, których gracz MOŻE używać podczas sprawdzania. |
@@ -67,10 +76,10 @@ allowed-commands:
 
 
 gui:
-  sprawdzanie:
+  checker:
     title: '&8Kontrola: &d{PLAYER}'
     items:
-      sprawdz:
+      check:
         material: COMPASS
         name: '&d&lROZPOCZNIJ SPRAWDZANIE'
         lore:
@@ -79,7 +88,7 @@ gui:
         - '&fi rozpocznij weryfikacje plikow.'
         - '&8&m------------------------'
         - '&bKliknij, aby wezwac gracza!'
-      czysty:
+      clean:
         material: LIME_DYE
         name: '&a&lGRACZ JEST CZYSTY'
         lore:
@@ -97,7 +106,7 @@ gui:
         - '&fuzywanie niedozwolonych modyfikacji.'
         - '&8&m------------------------'
         - '&bKliknij, aby ukarac!'
-      przyznanie:
+      admission:
         material: ANVIL
         name: '&b&lPRZYZNANIE SIE'
         lore:
@@ -106,7 +115,7 @@ gui:
         - '&fKara zostaje skrocona do &d5 dni&f.'
         - '&8&m------------------------'
         - '&bKliknij, aby nadac ban!'
-      wspolpraca:
+      lack-of-cooperation:
         material: IRON_BARS
         name: '&4&lBRAK WSPOLPRACY'
         lore:
@@ -123,7 +132,7 @@ gui:
         - '&fTeleportuj swoja postac do'
         - '&faktualnej &5strefy sprawdzania&f.'
         - '&8&m------------------------'
-      historia:
+      history:
         material: BOOK
         name: '&d&lHISTORIA KONTROLI'
         lore:
@@ -131,22 +140,22 @@ gui:
         - '&fZobacz rejestr wszystkich akcji'
         - '&fpodjetych wobec gracza &d{PLAYER}&f.'
         - '&8&m------------------------'
-  historie:
+  history:
     title: '&8Logi: &d{PLAYER}'
     items:
-      puste:
+      empty:
         material: BARRIER
         name: '&5&lBRAK WPISOW'
         lore:
         - '&fTen gracz nigdy nie byl sprawdzany.'
-      powrot:
+      back:
         material: BARRIER
         name: '&b&lPOWROT'
         lore:
         - '&fWroc do panelu glownego.'
-      wpisy:
+      entries:
         material: PAPER
-        name: '&d&lWPIS HISTORII &f#{ID}'
+        name: '&d&lWPIS HISTORII'
         lore:
         - '&fData: &b{DATE}'
         - '&fAkcja: &d{ACTION}'
