@@ -29,9 +29,9 @@ import pl.servercreators.listeners.QuitPlayerListener;
 import pl.servercreators.managers.ConfigManager;
 import pl.servercreators.managers.HistoryManager;
 import pl.servercreators.task.CheckedPlayersTask;
-import pl.servercreators.utils.GithubUpdater;
 import pl.servercreators.utils.RegistryUtil;
-import pl.servercreators.utils.SemanticVersion;
+import pl.servercreators.utils.Updater.GithubUpdater;
+import pl.servercreators.utils.Updater.SemanticVersion;
 
 @Getter
 public class SCSprawdzMain extends JavaPlugin {
@@ -54,6 +54,8 @@ public class SCSprawdzMain extends JavaPlugin {
     private CheckedPlayersTask checkedPlayersTask;
     private Permission perms = null;
 
+    private boolean updateAvailable = false;
+
     @Override
     public void onEnable() {
         if (!setupPermissions()) {
@@ -70,13 +72,11 @@ public class SCSprawdzMain extends JavaPlugin {
         this.spawnLocation = configManager.getLocations().load("spawn");
 
         this.groupCheckHelper = new GroupCheckHelper(this, perms, configManager);
-        this.historyGUI = new HistoryGUI(this, groupCheckHelper, historyManager, configManager, guiHelper);
-        this.checkGUI = new CheckGUI(this, groupCheckHelper, guiHelper, configManager, guiItemData);
+        this.historyGUI = new HistoryGUI(this, historyManager, configManager, guiHelper);
+        this.checkGUI = new CheckGUI(this, guiHelper, configManager, guiItemData);
 
         this.checkedPlayersTask = new CheckedPlayersTask(this, configManager);
         this.checkedPlayersTask.start();
-
-        GithubUpdater updater = new GithubUpdater("Pozdro320", "sc-sprawdzanie");
         
         new RegistryUtil(this)
             .registerListeners(
@@ -85,13 +85,16 @@ public class SCSprawdzMain extends JavaPlugin {
                 new QuitPlayerListener(this, configManager),
                 new BlockCommandListener(this, configManager),
                 new HistoryGuiListener(this, historyGUI, checkGUI, configManager),
-                new OnJoinListener(this, updater)
+                new OnJoinListener(this)
             )
             .registerCommands(
-                new ConfessesCommand("przyznajesie", this, groupCheckHelper, configManager, bansHelper),
-                new CheckCommand("sprawdz", this, checkGUI, groupCheckHelper, configManager),
-                new CheckerCommand("sprawdzarka", this, groupCheckHelper, configManager)
+                new ConfessesCommand("przyznajesie", this, configManager),
+                new CheckCommand("sprawdz", checkGUI, groupCheckHelper, configManager),
+                new CheckerCommand("sprawdzarka", this, configManager)
             );
+
+        String updateUrl = "https://gist.githubusercontent.com/Pozdro320/2c46fe72d5a9f822c55f087e00cc47a5/raw/gistfile1.txt";
+        GithubUpdater updater = new GithubUpdater(updateUrl);
 
         checkUpdate(updater);
     }
@@ -180,8 +183,8 @@ public class SCSprawdzMain extends JavaPlugin {
         this.checkLocation = configManager.getLocations().load("checker");
         this.spawnLocation = configManager.getLocations().load("spawn");
 
-        this.historyGUI = new HistoryGUI(this, groupCheckHelper, historyManager, configManager, guiHelper);
-        this.checkGUI = new CheckGUI(this, groupCheckHelper, guiHelper, configManager, guiItemData);
+        this.historyGUI = new HistoryGUI(this, historyManager, configManager, guiHelper);
+        this.checkGUI = new CheckGUI(this, guiHelper, configManager, guiItemData);
     }
 
     private boolean setupPermissions() {
@@ -196,15 +199,17 @@ public class SCSprawdzMain extends JavaPlugin {
     public Permission getPerms() {
         return perms;
     }
+    
     private void checkUpdate(GithubUpdater updater) {
         SemanticVersion currentVersion = new SemanticVersion(this.getDescription().getVersion());
         Bukkit.getScheduler().runTaskAsynchronously(this, () -> {
             if (updater.hasUpdate(currentVersion)) {
+                this.updateAvailable = true;
                 getLogger().warning("");
                 getLogger().warning("DOSTEPNA JEST NOWA WERSJA PLUGINU!");
                 getLogger().warning("");
             } else {
-                getLogger().info("Uzywasz najnowszej wersji pluginu (" + currentVersion.getVersion() + ").");
+                getLogger().info("Uzywasz najnowszej wersji pluginu!.");
             }
         });
     }

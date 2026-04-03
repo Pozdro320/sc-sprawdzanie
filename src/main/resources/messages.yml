@@ -47,6 +47,26 @@ messages:
     not-checked:
       chat: "&5&lServer&f&lCreators &8» &cNie jestes aktualnie sprawdzany."
       sound: "BLOCK_NOTE_BLOCK_BASS"
+    chat-no-moderator:
+      chat: "&5&lServer&f&lCreators &8» &cMusisz poczekać na administratora!"
+      sound: "BLOCK_NOTE_BLOCK_BASS"
+    only-players:
+      chat: "&5&lServer&f&lCreators &8» &cTylko gracze mogą używać tej komendy!"
+      sound: "BLOCK_NOTE_BLOCK_BASS"
+    no-permission-check:
+      chat: "&5&lServer&f&lCreators &8» &cNie masz uprawnień do tej komendy &8(&4sc-sprawdzanie.sprawdz&8)"
+      sound: "BLOCK_NOTE_BLOCK_BASS"
+    no-permission-checker:
+      chat: "&5&lServer&f&lCreators &8» &cNie masz uprawnień do tej komendy &8(&4sc-sprawdzanie.admin&8)"
+      sound: "BLOCK_NOTE_BLOCK_BASS"
+
+  usage:
+    check:
+      chat: "&5&lServer&f&lCreators &8» &cPoprawne użycie: &8/&4sprawdz &8<&4nick&8>"
+      sound: "BLOCK_NOTE_BLOCK_BASS"
+    checker:
+      chat: "&5&lServer&f&lCreators &8» &cPoprawne użycie: &8/&4sprawdzarka &8<&4set-checker&8|&4set-spawn&8|&4reload&8|&4teleport&8>"
+      sound: "BLOCK_NOTE_BLOCK_BASS"
 
   chat-checker:
     chat: "&8[&d&lGRACZ&8] &f{PLAYER}&8: &f{MESSAGE}"
@@ -110,6 +130,10 @@ messages:
       title: "&a&lPOMYŚLNIE"
       subtitle: "&fLokalizacja spawnu zostala ustawiona!"
       sound: "ENTITY_ENDERMAN_TELEPORT"
+
+  reload-success:
+    chat: "&8[&a!&8] &aPomyślnie przeładowano konfigurację"
+    sound: "BLOCK_NOTE_BLOCK_BIT"
 
 # WIADOMOŚCI TASKA PODCZAS SPRAWDZANIA
   player-message:

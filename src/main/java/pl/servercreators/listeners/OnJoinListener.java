@@ -1,39 +1,37 @@
 package pl.servercreators.listeners;
 
-import org.bukkit.Bukkit;
 import org.bukkit.entity.Player;
 import org.bukkit.event.EventHandler;
 import org.bukkit.event.Listener;
 import org.bukkit.event.player.PlayerJoinEvent;
 
 import pl.servercreators.SCSprawdzMain;
-import pl.servercreators.utils.GithubUpdater;
-import pl.servercreators.utils.SemanticVersion;
+import pl.servercreators.helpers.MessageHelper;
 
 public class OnJoinListener implements Listener {
 
     private final SCSprawdzMain plugin;
 
-    private final GithubUpdater updater;
-    private final SemanticVersion currentVersion;
-
-    public OnJoinListener(SCSprawdzMain plugin, GithubUpdater updater){
+    public OnJoinListener(SCSprawdzMain plugin){
         this.plugin = plugin;
-
-        this.updater = updater;
-        this.currentVersion = new SemanticVersion(plugin.getDescription().getVersion());
     }
 
     @EventHandler
     public void onJoin(PlayerJoinEvent event) {
         Player player = event.getPlayer();
-        
-        if (player.hasPermission("sc-sprawdzanie.admin")) {
-            Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
-                if (updater.hasUpdate(currentVersion)) {
-                    player.sendMessage("§8» §fDostępna jest nowa wersja §5sc-sprawdzanie§f!");
-                }
-            });
+
+        if (player.hasPermission("sc-sprawdzanie.admin") && plugin.isUpdateAvailable()) {
+            
+            MessageHelper.build("")
+                    .send(player);
+            MessageHelper.build(" &8» &fWykryto nową wersję pluginu &dSC-Sprawdzanie&f!")
+                    .send(player);
+            MessageHelper.build(" &8» &fPobierz ją na &bhttps://discord.gg/P6MBxsa2xs")
+                    .send(player);
+            MessageHelper.build("")
+                    .send(player);
+
+            MessageHelper.sendBar(player, "&8» &fDostępna jest nowa wersja &dsc-sprawdzanie&f!");
         }
     }
     

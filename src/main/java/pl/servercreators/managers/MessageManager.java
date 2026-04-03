@@ -7,6 +7,7 @@ import java.util.Map;
 
 import org.bukkit.Bukkit;
 import org.bukkit.Sound;
+import org.bukkit.command.CommandSender;
 import org.bukkit.configuration.ConfigurationSection;
 import org.bukkit.configuration.file.FileConfiguration;
 import org.bukkit.entity.Player;
@@ -32,7 +33,13 @@ public class MessageManager {
             if (root.isConfigurationSection(key)) {
                 ConfigurationSection bundle = root.getConfigurationSection(key);
                 
-                if (bundle != null && (bundle.contains("chat") || bundle.contains("title") || bundle.contains("actionbar"))) {
+                if (bundle != null && (
+                    bundle.contains("chat") ||
+                    bundle.contains("title") ||
+                    bundle.contains("subtitle") ||
+                    bundle.contains("actionbar") ||
+                    bundle.contains("sound") ||
+                    bundle.contains("broadcast"))) {
                     
                     List<String> chat = bundle.isList("chat") ?
                             bundle.getStringList("chat") :
@@ -53,21 +60,37 @@ public class MessageManager {
         }
     }
 
-    public void sendMessages(Player player, String path, String targetName, String moderatorName) {
+    public void sendMessages(CommandSender sender, String path, String... placeholders) {
+        if (sender instanceof Player player) {
+            sendMessagesToPlayer(player, path, placeholders);
+            return;
+        }
+
         MessageData data = messagesData.get(path);
         if (data == null) return;
 
-        data.getChat().forEach(line ->
-            player.sendMessage(format(line, targetName, moderatorName)));
+        data.getChat().forEach(line -> sender.sendMessage(MessageHelper.colored(replace(line, placeholders))));
+
+        if (!data.getBroadcast().isEmpty()) {
+            data.getBroadcast().forEach(line -> Bukkit.broadcastMessage(MessageHelper.colored(replace(line, placeholders))));
+        }
+    }
+
+    public void sendMessagesToPlayer(Player player, String path, String... placeholders) {
+        MessageData data = messagesData.get(path);
+        if (data == null) return;
+
+        data.getChat().forEach(line -> player.sendMessage(MessageHelper.colored(replace(line, placeholders))));
 
         if (!data.getActionBar().isEmpty()) {
-            MessageHelper.sendBar(player, format(data.getActionBar(), targetName, moderatorName));
+            MessageHelper.sendBar(player, replace(data.getActionBar(), placeholders));
         }
 
         if (!data.getTitle().isEmpty() || !data.getSubtitle().isEmpty()) {
             MessageHelper.sendTitle(player,
-                format(data.getTitle(), targetName, moderatorName),
-                format(data.getSubtitle(), targetName, moderatorName));
+                replace(data.getTitle(), placeholders),
+                replace(data.getSubtitle(), placeholders)
+            );
         }
 
         if (!data.getSound().isEmpty()) {
@@ -78,22 +101,32 @@ public class MessageManager {
         }
 
         if (!data.getBroadcast().isEmpty()) {
-            String bMsg = format(String.join("\n", data.getBroadcast()), targetName, moderatorName);
-            Bukkit.broadcastMessage(bMsg);
+            data.getBroadcast().forEach(line -> Bukkit.broadcastMessage(MessageHelper.colored(replace(line, placeholders))));
         }
     }
 
-    private String format(String text, String target, String mod) {
-        return PlaceholdersManager.replacePlaceholders(text, target, mod);
+    private String replace(String text, String... placeholders) {
+        if (text == null || placeholders == null || placeholders.length < 2) return text;
+        for (int i = 0; i < placeholders.length; i += 2) {
+            if (i + 1 < placeholders.length) {
+                text = text.replace(placeholders[i], placeholders[i + 1]);
+            }
+        }
+        return text;
     }
 
-    public String getSimpleMessage(String path, String targetName, String moderatorName) {
+    public String getSimpleMessage(String path, String... placeholders) {
         MessageData data = messagesData.get(path);
-        
-        if (data == null || data.getChat().isEmpty()) {
-            return MessageHelper.colored("&8» &4Brak wiadomości w messages.yml dla klucza: &f" + path);
+
+        if (data == null || data.getChat().isEmpty()){
+            return MessageHelper.colored("&8> &4Brak wiadomosci w messages.yml: " + path);
         }
 
-        return format(data.getChat().get(0), targetName, moderatorName);
+        String message = data.getChat().get(0);
+        return MessageHelper.colored(replace(message, placeholders));
+    }
+
+    public FileConfiguration getConfig() {
+        return config;
     }
 }

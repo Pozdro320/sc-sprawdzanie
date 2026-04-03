@@ -19,19 +19,19 @@
 # | Dostepne zmienne: {PLAYER} - nick gracza, {MODERATOR} - nick sprawdzającego |
 commands:
   cheats-detected:
-  - tempban {PLAYER} 7d &d&lSERVER-CREATORS &8» &fWykryto &5cheaty &fpodczas kontroli!
+  - tempban {PLAYER} 7d &8» &fWykryto &5cheaty &fpodczas kontroli!
     &8(&b{MODERATOR}&8)
   
   admission:
-  - tempban {PLAYER} 5d &d&lSERVER-CREATORS &8» &fGracz &b{PLAYER} &fprzyznal sie
+  - tempban {PLAYER} 5d &8» &fGracz &b{PLAYER} &fprzyznal sie
     do cheatow.
   
   lack-of-cooperation:
-  - tempban {PLAYER} 14d &d&lSERVER-CREATORS &8» &fBrak wspolpracy z administratorem
+  - tempban {PLAYER} 14d &8» &fBrak wspolpracy z administratorem
     &b{MODERATOR}&f.
   
   logged-out:
-  - tempban {PLAYER} 14d &d&lSERVER-CREATORS &8» &fGracz &b{PLAYER} &fwylogowal sie
+  - tempban {PLAYER} 14d &8» &fGracz &b{PLAYER} &fwylogowal sie
     podczas sprawdzania!
 
 

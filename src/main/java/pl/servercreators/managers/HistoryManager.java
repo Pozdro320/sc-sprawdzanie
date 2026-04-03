@@ -1,7 +1,7 @@
 package pl.servercreators.managers;
 
+import org.bukkit.Bukkit;
 import org.bukkit.configuration.file.YamlConfiguration;
-
 import pl.servercreators.SCSprawdzMain;
 import pl.servercreators.models.HistoryEntry;
 
@@ -16,10 +16,12 @@ import java.util.Map;
 
 public class HistoryManager {
     
+    private final SCSprawdzMain plugin;
     private final File historyFolder;
     private final DateTimeFormatter formatter = DateTimeFormatter.ofPattern("yyyy-MM-dd HH:mm:ss");
 
     public HistoryManager(SCSprawdzMain plugin) {
+        this.plugin = plugin;
         this.historyFolder = new File(plugin.getDataFolder(), "history");
         if (!this.historyFolder.exists()) {
             this.historyFolder.mkdirs();
@@ -27,38 +29,32 @@ public class HistoryManager {
     }
 
     public void log(String playerName, String action, String moderatorName) {
-        File playerFile = new File(historyFolder, playerName + ".yml");
-        YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
-        
         String time = LocalDateTime.now().format(formatter);
-        
-        Map<String, Object> entry = Map.of(
-            "date", time,
-            "action", action,
-            "moderator", moderatorName
-        );
 
-        List<?> rawLogs = config.getList("entries");
-        List<Map<Object, Object>> logs = new ArrayList<>();
 
-        if (rawLogs != null) {
-            for (Object obj : rawLogs) {
-                if (obj instanceof Map) {
-                    logs.add((Map<Object, Object>) obj);
-                }
+        Bukkit.getScheduler().runTaskAsynchronously(plugin, () -> {
+            File playerFile = new File(historyFolder, playerName + ".yml");
+            YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
+            
+            Map<String, Object> entry = Map.of(
+                "date", time,
+                "action", action,
+                "moderator", moderatorName
+            );
+
+            List<Map<?, ?>> logs = (List<Map<?, ?>>) config.getList("entries", new ArrayList<>());
+            logs.add(entry);
+            
+            config.set("entries", logs);
+            config.set("last_update", time);
+
+            try {
+                config.save(playerFile);
+            } catch (IOException e) {
+                plugin.getLogger().severe("Nie udalo sie zapisac historii dla: " + playerName);
+                e.printStackTrace();
             }
-        }
-
-        logs.add(new java.util.HashMap<>(entry));
-        
-        config.set("entries", logs);
-        config.set("last_update", time);
-
-        try {
-            config.save(playerFile);
-        } catch (IOException e) {
-            e.printStackTrace();
-        }
+        });
     }
 
     public List<HistoryEntry> getHistory(String playerName) {
@@ -68,21 +64,27 @@ public class HistoryManager {
         YamlConfiguration config = YamlConfiguration.loadConfiguration(playerFile);
         List<?> rawEntries = config.getList("entries");
         
-        if (rawEntries == null) return Collections.emptyList();
+        if (rawEntries == null || rawEntries.isEmpty()) return Collections.emptyList();
 
         List<HistoryEntry> entries = new ArrayList<>();
         
-        for (Object obj : rawEntries) {
-            if (obj instanceof Map<?, ?> map) {
-                String date = String.valueOf(map.get("date"));
-                String action = String.valueOf(map.get("action"));
-                String moderator = String.valueOf(map.get("moderator"));
+        int limit = 14;
+
+        int start = Math.max(0, rawEntries.size() - limit);
+
+        for (int i = rawEntries.size() - 1; i >= start; i--) {
+            Object obj = rawEntries.get(i);
+            if (obj instanceof Map<?, ?> rawMap) {
+                Map<String, Object> map = (Map<String, Object>) rawMap;
                 
-                entries.add(new HistoryEntry(date, action, moderator));
+                entries.add(new HistoryEntry(
+                    String.valueOf(map.getOrDefault("date", "Brak daty")),
+                    String.valueOf(map.getOrDefault("action", "Brak akcji")),
+                    String.valueOf(map.getOrDefault("moderator", "Brak moderatora"))
+                ));
             }
         }
-        
-        Collections.reverse(entries);
+
         return entries;
     }
 }

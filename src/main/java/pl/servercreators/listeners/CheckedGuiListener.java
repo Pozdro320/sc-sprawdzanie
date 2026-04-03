@@ -52,7 +52,7 @@ public class CheckedGuiListener implements Listener {
 
         Player target = Bukkit.getPlayer(UUID.fromString(targetUUIDStr));
         if (target == null) {
-            cm.getMessages().sendMessages(moderator, "errors.player-offline", null, null);
+            cm.getMessages().sendMessages(moderator, "errors.player-offline");
             moderator.closeInventory();
             return;
         }
@@ -62,12 +62,12 @@ public class CheckedGuiListener implements Listener {
         switch (slot) {
         case 11:
             if (plugin.getCheckLocation() == null) {
-                cm.getMessages().sendMessages(moderator, "errors.no-checker", null, null);
+                cm.getMessages().sendMessages(moderator, "errors.no-checker");
                 return;
             }
             
             if (plugin.getSpawnLocation() == null) {
-                cm.getMessages().sendMessages(moderator, "errors.no-spawn", null, null);
+                cm.getMessages().sendMessages(moderator, "errors.no-spawn");
                 return;
             }
 
@@ -76,21 +76,21 @@ public class CheckedGuiListener implements Listener {
 
             plugin.addChecked(target, moderator);
 
-            cm.getMessages().sendMessages(target, "check-start-player", target.getName(), moderator.getName());
-            cm.getMessages().sendMessages(moderator, "check-start-mod", target.getName(), moderator.getName());
+            cm.getMessages().sendMessages(target, "check-start-player", "{MODERATOR}", moderator.getName());
+            cm.getMessages().sendMessages(moderator, "check-start-mod", "{PLAYER}", target.getName(), "{MODERATOR}", moderator.getName());
             break;
 
         case 13:
             if (!plugin.isChecked(target)) {
-                cm.getMessages().sendMessages(moderator, "errors.is-checked", target.getName(), moderator.getName());
+                cm.getMessages().sendMessages(moderator, "errors.is-checked", "{PLAYER}", target.getName());
                 moderator.closeInventory();
                 return;
             }
 
             target.teleport(plugin.getSpawnLocation());
 
-            cm.getMessages().sendMessages(target, "player-clean", target.getName(), moderator.getName());
-            cm.getMessages().sendMessages(moderator, "mod-clean", target.getName(), moderator.getName());
+            cm.getMessages().sendMessages(target, "player-clean", "{PLAYER}", target.getName(), "{MODERATOR}", moderator.getName());
+            cm.getMessages().sendMessages(moderator, "mod-clean", "{PLAYER}", target.getName(), "{MODERATOR}", moderator.getName());
 
             String cleanReason = plugin.getConfig().getString("history-reasons.clean", "MARKED AS CLEAN");
             plugin.getHistoryManager().log(target.getName(), cleanReason, moderator.getName());
@@ -99,12 +99,12 @@ public class CheckedGuiListener implements Listener {
 
         case 15:
             if (!plugin.isChecked(target)) {
-                cm.getMessages().sendMessages(moderator, "errors.is-checked", target.getName(), moderator.getName());
+                cm.getMessages().sendMessages(moderator, "errors.is-checked", "{PLAYER}", target.getName());
                 moderator.closeInventory();
                 return;
             }
 
-            cm.getMessages().sendMessages(moderator, "cheats-mod", target.getName(), moderator.getName());
+            cm.getMessages().sendMessages(moderator, "cheats-mod", "{PLAYER}", target.getName());
 
             String cheatsReason = plugin.getConfig().getString("history-reasons.cheats", "BANNED (CHEATS)");
             plugin.getHistoryManager().log(target.getName(), cheatsReason, moderator.getName());
@@ -116,12 +116,12 @@ public class CheckedGuiListener implements Listener {
 
         case 21:
             if (!plugin.isChecked(target)) {
-                cm.getMessages().sendMessages(moderator, "errors.is-checked", target.getName(), moderator.getName());
+                cm.getMessages().sendMessages(moderator, "errors.is-checked", "{PLAYER}", target.getName());
                 moderator.closeInventory();
                 return;
             }
 
-            cm.getMessages().sendMessages(moderator, "admission-mod", target.getName(), moderator.getName());
+            cm.getMessages().sendMessages(moderator, "admission-mod", "{PLAYER}", target.getName());
 
             String admissionReason = plugin.getConfig().getString("history-reasons.admission", "BANNED (ADMISSION)");
             plugin.getHistoryManager().log(target.getName(), admissionReason, moderator.getName());
@@ -133,12 +133,12 @@ public class CheckedGuiListener implements Listener {
 
         case 23:
             if (!plugin.isChecked(target)) {
-                cm.getMessages().sendMessages(moderator, "errors.is-checked", target.getName(), moderator.getName());
+                cm.getMessages().sendMessages(moderator, "errors.is-checked", "{PLAYER}", target.getName());
                 moderator.closeInventory();
                 return;
             }
 
-            cm.getMessages().sendMessages(moderator, "lack-of-cooperation-mod", target.getName(), moderator.getName());
+            cm.getMessages().sendMessages(moderator, "lack-of-cooperation-mod", "{PLAYER}", target.getName());
 
             String noCoopReason = plugin.getConfig().getString("history-reasons.no-cooperation", "BANNED (LACK OF COOPERATION)");
             plugin.getHistoryManager().log(target.getName(), noCoopReason, moderator.getName());
@@ -149,12 +149,12 @@ public class CheckedGuiListener implements Listener {
             
         case 34:
             if (plugin.getCheckLocation() == null) {
-                cm.getMessages().sendMessages(moderator, "errors.no-checker", null, null);
+                cm.getMessages().sendMessages(moderator, "errors.no-checker");
                 return;
             }
 
             moderator.teleport(plugin.getCheckLocation());
-            cm.getMessages().sendMessages(moderator, "tp-checker", null, null);
+            cm.getMessages().sendMessages(moderator, "tp-checker");
             break;
 
         case 35:

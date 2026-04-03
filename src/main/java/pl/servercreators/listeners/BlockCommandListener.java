@@ -36,7 +36,7 @@ public class BlockCommandListener implements Listener {
         }
 
         event.setCancelled(true);
-        cm.getMessages().sendMessages(player, "errors.block-commands", player.getName(), null);
+        cm.getMessages().sendMessages(player, "errors.block-commands");
     }
     
 }

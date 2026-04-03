@@ -30,13 +30,13 @@ public class ChatListener implements Listener {
             
             if (moderator != null && moderator.isOnline()) {
 
-            String rawFormat = cm.getMessages().getSimpleMessage("chat-checker", player.getName(), moderator.getName());
+            String rawFormat = cm.getMessages().getSimpleMessage("chat-checker", "{PLAYER}", player.getName());
             String finalMsg = rawFormat.replace("{MESSAGE}", message);
 
             player.sendMessage(finalMsg);
             moderator.sendMessage(finalMsg);
             } else {
-                cm.getMessages().sendMessages(player, "chat-no-moderator", player.getName(), null);
+                cm.getMessages().sendMessages(player, "chat-no-moderator", "{PLAYER}", player.getName());
             }
             return;
         }
@@ -45,7 +45,7 @@ public class ChatListener implements Listener {
         if (checker != null && checker.isOnline()) {
             event.setCancelled(true);
 
-            String rawFormat = cm.getMessages().getSimpleMessage("chat-moderator", checker.getName(), player.getName());
+            String rawFormat = cm.getMessages().getSimpleMessage("chat-moderator", "{MODERATOR}", checker.getName());
             String finalMsg = rawFormat.replace("{MESSAGE}", message);
 
             player.sendMessage(finalMsg);

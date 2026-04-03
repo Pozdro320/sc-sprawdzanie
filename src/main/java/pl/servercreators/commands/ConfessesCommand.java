@@ -7,24 +7,17 @@ import org.bukkit.entity.Player;
 import org.jetbrains.annotations.NotNull;
 
 import pl.servercreators.SCSprawdzMain;
-import pl.servercreators.helpers.BansHelper;
-import pl.servercreators.helpers.GroupCheckHelper;
-import pl.servercreators.helpers.MessageHelper;
 import pl.servercreators.managers.ConfigManager;
 
 public class ConfessesCommand extends Command {
 
     private final SCSprawdzMain plugin;
-    private final GroupCheckHelper groupCheckHelper;
     private final ConfigManager cm;
-    private final BansHelper bansHelper;
     
-    public ConfessesCommand(String name, SCSprawdzMain plugin, GroupCheckHelper groupCheckHelper, ConfigManager cm, BansHelper bansHelper) {
+    public ConfessesCommand(String name, SCSprawdzMain plugin, ConfigManager cm) {
         super(name);
         this.plugin = plugin;
-        this.groupCheckHelper = groupCheckHelper;
         this.cm = cm;
-        this.bansHelper = bansHelper;
 
         this.setDescription("Komenda pozwalająca przyznać się podczas sprawdzania");
     }
@@ -33,19 +26,18 @@ public class ConfessesCommand extends Command {
     public boolean execute(@NotNull CommandSender sender, @NotNull String commandLabel, @NotNull String[] args) {
 
         if (!(sender instanceof Player)) {
-            sender.sendMessage(MessageHelper.colored("&8» #CF4E4ETylko gracze mogą używać tej komendy!"));
+            cm.getMessages().sendMessages(sender, "errors.only-players");
             return true;
         }
 
         Player player = (Player) sender;
 
         if (!plugin.isChecked(player)) {
-            cm.getMessages().sendMessages(player, "errors.not-checked", player.getName(), null);
+            cm.getMessages().sendMessages(player, "errors.not-checked");
             return true;
         }
 
         Player moderator = plugin.getModerator(player);
-        String modName = (moderator != null) ? moderator.getName() : "Console";
 
         Location spawnLoc = plugin.getSpawnLocation();
         
@@ -53,7 +45,7 @@ public class ConfessesCommand extends Command {
         plugin.removeChecked(player);
 
         if (moderator != null && moderator.isOnline()) {
-            cm.getMessages().sendMessages(moderator, "admission-mod", player.getName(), modName);
+            cm.getMessages().sendMessages(moderator, "admission-mod", "{PLAYER}", player.getName());
         }
 
         plugin.removeChecked(player);

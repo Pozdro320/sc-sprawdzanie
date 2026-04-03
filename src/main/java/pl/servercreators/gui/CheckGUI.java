@@ -7,31 +7,23 @@ import org.bukkit.inventory.Inventory;
 
 import pl.servercreators.SCSprawdzMain;
 import pl.servercreators.data.GuiItemData;
-import pl.servercreators.helpers.GroupCheckHelper;
 import pl.servercreators.helpers.GuiHelper;
 import pl.servercreators.managers.ConfigManager;
 
 public class CheckGUI {
-        private final SCSprawdzMain plugin;
-
-        private final GroupCheckHelper groupCheckHelper;
         private final ConfigManager cm;
 
         private final NamespacedKey KEY_TYPE;
         private final NamespacedKey KEY_TARGET;
 
         private final GuiHelper guiHelper;
-        private final GuiItemData guiItemData;
 
-        public CheckGUI(SCSprawdzMain plugin, GroupCheckHelper groupCheckHelper, GuiHelper guiHelper, ConfigManager cm, GuiItemData guiItemData) {
-                this.plugin = plugin;
+        public CheckGUI(SCSprawdzMain plugin, GuiHelper guiHelper, ConfigManager cm, GuiItemData guiItemData) {
 
                 this.KEY_TYPE = new NamespacedKey(plugin, "gui_type");
                 this.KEY_TARGET = new NamespacedKey(plugin, "target_uuid");
 
-                this.guiItemData = guiItemData;
                 this.guiHelper = guiHelper;
-                this.groupCheckHelper = groupCheckHelper;
                 this.cm = cm;
         }
 

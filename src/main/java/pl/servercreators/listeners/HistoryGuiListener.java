@@ -58,7 +58,7 @@ public class HistoryGuiListener implements Listener {
                     moderator.playSound(moderator.getLocation(), Sound.ITEM_BOOK_PAGE_TURN, 1f, 1f);
                 } else {
                     moderator.closeInventory();
-                    cm.getMessages().sendMessages(moderator, "errors.player-offline", null, null);
+                    cm.getMessages().sendMessages(moderator, "errors.player-offline", "{PLAYER}", target.getName());
                 }
             break;
         }

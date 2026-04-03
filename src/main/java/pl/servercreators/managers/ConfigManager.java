@@ -30,7 +30,7 @@ public class ConfigManager {
         this.plugin = plugin;
         
         plugin.saveDefaultConfig();
-        plugin.saveResource("messages.yml", false);
+        saveResourceIfNotExists("messages.yml");
         plugin.reloadConfig();
         
         this.config = plugin.getConfig();
@@ -82,4 +82,16 @@ public class ConfigManager {
     public List<String> getBanCommands(String type) {
         return config.getStringList("commands." + type);
     }
+
+    private void saveResourceIfNotExists(String fileName) {
+        File file = new File(plugin.getDataFolder(), fileName);
+        if (!file.exists()) {
+            plugin.saveResource(fileName, false);
+        }
+    }
+
+    public MessageManager getMessages() {
+        return this.messages;
+    }
+
 }

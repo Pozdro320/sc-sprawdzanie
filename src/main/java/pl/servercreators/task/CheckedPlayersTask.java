@@ -55,10 +55,10 @@ public class CheckedPlayersTask {
             String targetName = target.getName();
             String modName = (moderator != null) ? moderator.getName() : "Console";
 
-            cm.getMessages().sendMessages(target, "player-message", targetName, modName);
+            cm.getMessages().sendMessages(target, "player-message", "{MODERATOR}", modName);
 
             if (moderator != null && moderator.isOnline()) {
-                cm.getMessages().sendMessages(moderator, "mod-message", targetName, modName);
+                cm.getMessages().sendMessages(moderator, "mod-message", "{PLAYER}", targetName);
             }
         }
     }
