@@ -1,6 +1,22 @@
-/target/
-/.idea/
-/*.iml
-/.settings/
-/.classpath
-/.project
+# Skompilowane pliki klas 
+*.class
+*.log
+*.cjs
+
+# Foldery budowania projektu
+target/
+build/
+bin/
+
+# Pliki konfiguracyjne środowisk programistycznych
+.idea/
+*.iml
+.project
+.classpath
+.settings/
+.vscode/
+
+# Pliki spakowane
+*.jar
+*.war
+*.zip

@@ -7,18 +7,29 @@ import org.bukkit.Bukkit;
 import org.bukkit.command.CommandSender;
 import org.bukkit.entity.Player;
 
+import java.awt.Color;
+import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
+import java.util.concurrent.ConcurrentHashMap;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 import java.util.stream.Collectors;
 
 public class MessageHelper {
+    private static final Pattern MULTI_GRADIENT_PATTERN = Pattern.compile("<gradient:((#[a-fA-F0-9]{6}:?)+)>(.*?)</gradient>");
+    private static final Pattern HEX_PATTERN = Pattern.compile("&#([a-fA-F0-9]{6})|#([a-fA-F0-9]{6})");
+
+    private static final Map<String, String> CACHE = new ConcurrentHashMap<>();
     
-    private static final Pattern HEX_PATTERN = Pattern.compile("#[a-fA-F0-9]{6}");
     private final String message;
 
     private MessageHelper(final String message) {
         this.message = message;
+    }
+
+    public static void clearCache() {
+        CACHE.clear();
     }
 
     public static MessageHelper build(final String message) {
@@ -27,15 +38,82 @@ public class MessageHelper {
 
     public static String colored(String message) {
         if (message == null || message.isEmpty()) return "";
-        
-        Matcher matcher = HEX_PATTERN.matcher(message);
-        StringBuilder buffer = new StringBuilder();
-        while (matcher.find()) {
-            matcher.appendReplacement(buffer, ChatColor.of(matcher.group()).toString());
+
+        return CACHE.computeIfAbsent(message, msg -> {
+            String processed = msg;
+
+            processed = processed.replace("<b>", "&l").replace("</b>", "&r")
+                            .replace("<i>", "&o").replace("</i>", "&r")
+                            .replace("<u>", "&n").replace("</u>", "&r")
+                            .replace("<obf>", "&k").replace("</obf>", "&r")
+                            .replace("<strike>", "&m").replace("</strike>", "&r")
+                            .replace(">>", "»");
+
+            processed = ChatColor.translateAlternateColorCodes('&', processed);
+
+            Matcher gradientMatcher = MULTI_GRADIENT_PATTERN.matcher(processed);
+            while (gradientMatcher.find()) {
+                String colorsStr = gradientMatcher.group(1);
+                String content = gradientMatcher.group(3);
+                String[] hexes = colorsStr.split(":");
+                processed = processed.replace(gradientMatcher.group(), applyMultiGradient(content, hexes));
+            }
+
+            Matcher hexMatcher = HEX_PATTERN.matcher(processed);
+            StringBuilder buffer = new StringBuilder();
+            while (hexMatcher.find()) {
+                String hex = hexMatcher.group(1) != null ? hexMatcher.group(1) : hexMatcher.group(2);
+                hexMatcher.appendReplacement(buffer, ChatColor.of("#" + hex).toString());
+            }
+            hexMatcher.appendTail(buffer);
+            
+            return buffer.toString();
+        });
+    }
+
+    private static String applyMultiGradient(String text, String[] hexes) {
+        StringBuilder builder = new StringBuilder();
+        List<Color> colors = new ArrayList<>();
+        for (String hex : hexes) {
+            colors.add(Color.decode(hex));
         }
-        matcher.appendTail(buffer);
-        
-        return ChatColor.translateAlternateColorCodes('&', buffer.toString()).replace(">>", "»");
+
+        StringBuilder styles = new StringBuilder();
+        String cleanText = text;
+        if (text.contains("§")) {
+            Matcher styleMatcher = Pattern.compile("§[l-okmn]").matcher(text);
+            while (styleMatcher.find()) {
+                styles.append(styleMatcher.group());
+            }
+            cleanText = text.replaceAll("§[l-okm n]", "");
+        }
+
+        int len = cleanText.length();
+        if (len == 0) return "";
+
+        for (int i = 0; i < len; i++) {
+            float globalRatio = (float) i / (float) (len > 1 ? len - 1 : 1);
+            float section = globalRatio * (colors.size() - 1);
+            int index = (int) section;
+            float localRatio = section - index;
+
+            if (index >= colors.size() - 1) {
+                index = colors.size() - 2;
+                localRatio = 1.0f;
+            }
+
+            Color start = colors.get(index);
+            Color end = colors.get(index + 1);
+
+            int r = (int) (start.getRed() * (1 - localRatio) + end.getRed() * localRatio);
+            int g = (int) (start.getGreen() * (1 - localRatio) + end.getGreen() * localRatio);
+            int b = (int) (start.getBlue() * (1 - localRatio) + end.getBlue() * localRatio);
+
+            builder.append(ChatColor.of(new Color(r, g, b)))
+                    .append(styles.toString())
+                    .append(cleanText.charAt(i));
+        }
+        return builder.toString();
     }
 
     public static List<String> colored(final List<String> texts) {
@@ -67,4 +145,5 @@ public class MessageHelper {
     public void send(CommandSender sender) {
         sender.sendMessage(colored(message));
     }
+
 }

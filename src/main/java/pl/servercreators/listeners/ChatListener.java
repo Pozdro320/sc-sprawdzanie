@@ -21,35 +21,35 @@ public class ChatListener implements Listener {
 
     @EventHandler(priority = EventPriority.HIGHEST, ignoreCancelled = true)
     public void onChat(AsyncPlayerChatEvent event) {
-        Player player = event.getPlayer();
+        Player moderator = event.getPlayer();
         String message = event.getMessage();
 
-        if (plugin.isChecked(player)) {
+        if (plugin.isChecked(moderator)) {
+            Player checker = moderator;
             event.setCancelled(true);
-            Player moderator = plugin.getModerator(player);
+            Player mod = plugin.getModerator(checker);
             
-            if (moderator != null && moderator.isOnline()) {
+            if (mod != null && mod.isOnline()) {
+                String rawFormat = cm.getMessages().getSimpleMessage("chat-checker", "{PLAYER}", checker.getName());
+                String finalMsg = rawFormat.replace("{MESSAGE}", message);
 
-            String rawFormat = cm.getMessages().getSimpleMessage("chat-checker", "{PLAYER}", player.getName());
-            String finalMsg = rawFormat.replace("{MESSAGE}", message);
-
-            player.sendMessage(finalMsg);
-            moderator.sendMessage(finalMsg);
+                checker.sendMessage(finalMsg);
+                mod.sendMessage(finalMsg);
             } else {
-                cm.getMessages().sendMessages(player, "chat-no-moderator", "{PLAYER}", player.getName());
+                cm.getMessages().sendMessages(checker, "chat-no-moderator", "{PLAYER}", checker.getName());
             }
             return;
         }
 
-        Player checker = plugin.getChecked(player);
-        if (checker != null && checker.isOnline()) {
+        Player checked = plugin.getChecked(moderator);
+        if (checked != null && checked.isOnline()) {
             event.setCancelled(true);
 
-            String rawFormat = cm.getMessages().getSimpleMessage("chat-moderator", "{MODERATOR}", checker.getName());
+            String rawFormat = cm.getMessages().getSimpleMessage("chat-moderator", "{MODERATOR}", moderator.getName());
             String finalMsg = rawFormat.replace("{MESSAGE}", message);
 
-            player.sendMessage(finalMsg);
-            checker.sendMessage(finalMsg);
+            checked.sendMessage(finalMsg);
+            moderator.sendMessage(finalMsg);
         }
     }
 }

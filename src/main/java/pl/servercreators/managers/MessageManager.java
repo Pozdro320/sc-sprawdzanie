@@ -69,10 +69,10 @@ public class MessageManager {
         MessageData data = messagesData.get(path);
         if (data == null) return;
 
-        data.getChat().forEach(line -> sender.sendMessage(MessageHelper.colored(replace(line, placeholders))));
+        data.getRawChat().forEach(line -> sender.sendMessage(MessageHelper.colored(replace(line, placeholders))));
 
-        if (!data.getBroadcast().isEmpty()) {
-            data.getBroadcast().forEach(line -> Bukkit.broadcastMessage(MessageHelper.colored(replace(line, placeholders))));
+        if (!data.getRawBroadcast().isEmpty()) {
+            data.getRawBroadcast().forEach(line -> Bukkit.broadcastMessage(MessageHelper.colored(replace(line, placeholders))));
         }
     }
 
@@ -80,17 +80,29 @@ public class MessageManager {
         MessageData data = messagesData.get(path);
         if (data == null) return;
 
-        data.getChat().forEach(line -> player.sendMessage(MessageHelper.colored(replace(line, placeholders))));
+        boolean hasPlaceholders = placeholders != null && placeholders.length >= 2;
 
-        if (!data.getActionBar().isEmpty()) {
-            MessageHelper.sendBar(player, replace(data.getActionBar(), placeholders));
+        if (hasPlaceholders) {
+            data.getRawChat().forEach(line -> player.sendMessage(MessageHelper.colored(replace(line, placeholders))));
+        } else {
+            data.getColoredChat().forEach(player::sendMessage);
         }
 
-        if (!data.getTitle().isEmpty() || !data.getSubtitle().isEmpty()) {
-            MessageHelper.sendTitle(player,
-                replace(data.getTitle(), placeholders),
-                replace(data.getSubtitle(), placeholders)
-            );
+        if (!data.getRawActionBar().isEmpty()) {
+            String bar = hasPlaceholders ?
+                MessageHelper.colored(replace(data.getRawActionBar(), placeholders)) :
+                data.getColoredActionBar();
+            MessageHelper.sendBar(player, bar);
+        }
+
+        if (!data.getRawTitle().isEmpty() || !data.getRawSubtitle().isEmpty()) {
+            String t = hasPlaceholders ?
+                MessageHelper.colored(replace(data.getRawTitle(), placeholders)) :
+                data.getColoredTitle();
+            String s = hasPlaceholders ?
+                MessageHelper.colored(replace(data.getRawSubtitle(), placeholders)) :
+                data.getColoredSubtitle();
+            player.sendTitle(t, s, 10, 40, 10);
         }
 
         if (!data.getSound().isEmpty()) {
@@ -100,29 +112,35 @@ public class MessageManager {
             } catch (IllegalArgumentException ignored) {}
         }
 
-        if (!data.getBroadcast().isEmpty()) {
-            data.getBroadcast().forEach(line -> Bukkit.broadcastMessage(MessageHelper.colored(replace(line, placeholders))));
+        if (!data.getRawBroadcast().isEmpty()) {
+            if (hasPlaceholders) {
+                data.getRawBroadcast().forEach(line ->
+                    Bukkit.broadcastMessage(MessageHelper.colored(replace(line, placeholders))));
+            } else {
+                data.getColoredBroadcast().forEach(Bukkit::broadcastMessage);
+            }
         }
     }
 
     private String replace(String text, String... placeholders) {
         if (text == null || placeholders == null || placeholders.length < 2) return text;
+        String result = text;
         for (int i = 0; i < placeholders.length; i += 2) {
             if (i + 1 < placeholders.length) {
-                text = text.replace(placeholders[i], placeholders[i + 1]);
+                result = result.replace(placeholders[i], placeholders[i + 1]);
             }
         }
-        return text;
+        return result;
     }
 
     public String getSimpleMessage(String path, String... placeholders) {
         MessageData data = messagesData.get(path);
 
-        if (data == null || data.getChat().isEmpty()){
+        if (data == null || data.getRawChat().isEmpty()){
             return MessageHelper.colored("&8> &4Brak wiadomosci w messages.yml: " + path);
         }
 
-        String message = data.getChat().get(0);
+        String message = data.getRawChat().get(0);
         return MessageHelper.colored(replace(message, placeholders));
     }
 
